@@ -12,7 +12,7 @@
 			{
 				echo '<p>MYSQL error: '.$dbConnection->connect_error.'</p>';
 			} else {
-				date_default_timezone_set("America/New_York");
+				date_default_timezone_set("America/Toronto");
 				$date = date("Y-m-d h:i:s");
 				
 				$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, date_created) VALUES (?,?,?)");
@@ -41,14 +41,14 @@
 <body style="padding-top: 20px">
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-4 col-md-offset-4">
+			<div class="col-sm-8 col-md-offset-2">
 				<div class="panel">
 					<div class="panel-heading">
 						<h1> Register </h1>
 					</div>
 					<div class="panel-body">
 						<?php echo $error ?>
-						<form action="register.php" method="post">
+						<form class="form-horizontal" action="register.php" method="post">
 						<div class="form-group">
 							<label for="username"> Email Address </label>
 							<input class="form-control" type="email" name="email" />
@@ -56,6 +56,26 @@
 						<div class="form-group">
 							<label for="password"> Password </label>
 							<input class="form-control" type="password" name="password" />
+						</div>
+						<div class="form-group">
+							<label for="username"> Firstname </label>
+							<input class="form-control" type="text" name="firstname" />
+						</div>
+						<div class="form-group">
+							<label for="username"> Lastname </label>
+							<input class="form-control" type="text" name="lastname" />
+						</div>
+						<div class="form-group">
+							<label for="username"> Date Of Birth </label>
+							<input class="form-control" type="date" name="dob" />
+						</div>
+						<div class="form-group">
+							<label for="username"> Address 1</label>
+							<input class="form-control" type="text" name="address1" />
+						</div>
+						<div class="form-group">
+							<label for="username"> Address 2</label>
+							<input class="form-control" type="text" name="address2" />
 						</div>
 						<input type="submit" value="Register" />
 						</form>
