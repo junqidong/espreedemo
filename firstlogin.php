@@ -23,7 +23,14 @@
 				}
 			}
 			if(strcmp($error, "")==0){
-				header('Location: welcome.php');
+				$stmt = $dbConnection->prepare("UPDATE Users SET categories_picked='1' WHERE user_id=?");
+				$stmt->bind_param("s", $userid);
+				
+				if(!$stmt->execute()){
+					$error = "<div class=\"alert alert-danger\"> Error picking coupon.</div>";
+				} else {
+					header('Location: welcome.php');
+				}
 			}	
 		}
 		// 
