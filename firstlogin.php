@@ -4,7 +4,7 @@
 	$error = "";
 	
 	$dbConnection = new mysqli($host, $username, $password, $database);
-
+	//mysqli_report(MYSQLI_REPORT_ALL);
 	
 		
 	if(!$dbConnection->connect_error)
@@ -26,15 +26,21 @@
 				header('Location: welcome.php');
 			}	
 		}
-		
-		$stmt = $dbConnection->prepare("SELECT brand.brand_name, coupons.coupon_id, coupons.name, coupons.price FROM Coupons LEFT JOIN Brand ON coupons.brand_id = brand.brand_id");
+		// 
+		$stmt = $dbConnection->prepare("SELECT Brand.brand_name, Coupons.coupon_id, Coupons.name, Coupons.price FROM Coupons LEFT JOIN Brand ON Coupons.brand_id = Brand.brand_id");
+		if($stmt){
 		
 		if(!$stmt->execute()){
 			$error = "<div class=\"alert alert-danger\"> Error. </div>";
 		} else {
 			$result = $stmt->get_result();
 		}
+		
 		$stmt->close();
+		} else {
+			echo var_dump($stmt);
+
+		}
 		$dbConnection->close();
 	}
 
