@@ -29,3 +29,26 @@ a.button-advert:hover{
 	color: #FFFFFF;
 	text-decoration: none;
 }
+
+.coupon {
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+
+	width:100%;
+	padding:10px 10px;
+	border:1px solid #a3a3a3;
+	border-radius: 6px;
+}
+
+.checkbox:hover{
+	background-color:rgba(0,0,0,0.1);
+}
+
+.coupon > span.price {
+	float: right;
+}

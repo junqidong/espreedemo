@@ -2,26 +2,25 @@
 	require "dbinfo.php";
 	$error = "";
 
-	if(isset($_POST["email"]) && isset($_POST["password"]))
+	if(isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["address1"]) && isset($_POST["dob"]))
 	{
-		if($_POST["email"] != ""  && $_POST["password"] != "")
+		if($_POST["email"] != ""  && $_POST["password"] != "" && $_POST["address1"] != "")
 		{		
 			$dbConnection = new mysqli($host, $username, $password, $database);
 		
-			if($dbConnection->connect_error)
+			if(!$dbConnection->connect_error)
 			{
-				echo '<p>MYSQL error: '.$dbConnection->connect_error.'</p>';
-			} else {
 				date_default_timezone_set("America/Toronto");
 				$date = date("Y-m-d h:i:s");
-				
-				$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, date_created) VALUES (?,?,?)");
-
-				$stmt->bind_param("sss", $_POST["email"], md5($_POST["password"]), $date);
-				
+				if(isset($_POST["address2"])){
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, address2, dateOfBirth, date_created) VALUES (?,?,?,?,?,?)");
+					$stmt->bind_param("ssssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["address2"], $_POST["dob"], $date);
+				} else {
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, dateOfBirth, date_created) VALUES (?,?,?,?,?)");
+					$stmt->bind_param("sssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["dob"], $date);
+				}
 				
 				if(!$stmt->execute()){
-					echo $stmt->error;
 					$error = "<div class=\"alert alert-danger\"> Error registering.</div>";
 				} else {
 					header('Location: index.php');
@@ -48,7 +47,7 @@
 					</div>
 					<div class="panel-body">
 						<?php echo $error ?>
-						<form class="form-horizontal" action="register.php" method="post">
+						<form action="register.php" method="post">
 						<div class="form-group">
 							<label for="username"> Email Address </label>
 							<input class="form-control" type="email" name="email" />

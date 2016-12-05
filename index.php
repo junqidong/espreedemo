@@ -13,16 +13,25 @@
     			echo '<p>MYSQL Error: ' .$dbConnection->connect_error.'</p>';
     		} else {
 			
-				$stmt = $dbConnection->prepare("SELECT password FROM Users WHERE email = ?");
+				$stmt = $dbConnection->prepare("SELECT user_id, categories_picked, password FROM Users WHERE email = ?");
 				$stmt->bind_param("s", $_POST["email"]);
 				
 				if($stmt->execute()){
-					$stmt->bind_result($password);
-					while($stmt->fetch()){	
-						if($password != md5($_POST["password"])){
-							$error = "<div class=\"alert alert-danger\"> Invalid password. </div>";
+					$result = $stmt->get_result();
+					$row = $result->fetch_assoc();
+					
+					$password = $row['password'];
+					$userid = $row['user_id'];
+					$categories_picked = $row['categories_picked'];
+					
+					if($password != md5($_POST["password"])){
+						$error = "<div class=\"alert alert-danger\"> Invalid password. </div>";
+					} else {
+						$_SESSION["email"] = $_POST["email"];
+						$_SESSION["userid"] = $userid;
+						if(strcmp($categories_picked, "0")==0){
+							header('Location: firstlogin.php');
 						} else {
-							$_SESSION["email"] = $_POST["email"];
 							header('Location: welcome.php');
 						}
 					}
