@@ -23,27 +23,20 @@
 				}
 			}
 			if(strcmp($error, "")==0){
-				$stmt = $dbConnection->prepare("UPDATE Users SET categories_picked='1' WHERE user_id=?");
-				$stmt->bind_param("s", $userid);
-				
-				if(!$stmt->execute()){
-					$error = "<div class=\"alert alert-danger\"> Error picking coupon.</div>";
-				} else {
-					header('Location: welcome.php');
-				}
+				header('Location: welcome.php');
 			}	
 		}
 		// 
 		$stmt = $dbConnection->prepare("SELECT Brand.brand_name, Coupons.coupon_id, Coupons.name, Coupons.price FROM Coupons LEFT JOIN Brand ON Coupons.brand_id = Brand.brand_id");
 		if($stmt){
 		
-		if(!$stmt->execute()){
-			$error = "<div class=\"alert alert-danger\"> Error. </div>";
-		} else {
-			$result = $stmt->get_result();
-		}
+			if(!$stmt->execute()){
+				$error = "<div class=\"alert alert-danger\"> Error. </div>";
+			} else {
+				$result = $stmt->get_result();
+			}
 		
-		$stmt->close();
+			$stmt->close();
 		} else {
 			echo var_dump($stmt);
 
@@ -53,6 +46,54 @@
 
 
 ?>
+
+
+<?php
+	require "dbinfo.php";
+	session_start();
+	$error = "";
+	
+	$dbConnection = new mysqli($host, $username, $password, $database);
+			
+	if(!$dbConnection->connect_error)
+	{
+		if(isset($_POST["categories"])){
+			$categories = $_POST["categories"];
+			$userid = $_SESSION["userid"];
+				
+			$stmt2 = $dbConnection->prepare("INSERT INTO User_Categories(category_id, user_id) VALUES (?,?)");
+			
+			foreach ($categories as $categories=>$value) {
+				$stmt2->bind_param("ss", $value, $userid);
+				if(!$stmt2->execute()){
+					echo $stmt2->error;
+					$error = "<div class=\"alert alert-danger\"> Error selecting category.</div>";
+				}
+			}
+			if(strcmp($error, "")==0){
+				header('Location: welcome.php');
+			}
+		}
+		
+		$stmt2 = $dbConnection->prepare("SELECT Categories.category_id, Categories.category_name FROM Categories");
+		
+		if($stmt2){
+			if(!$stmt2->execute()){
+				$error = "<div class=\"alert alert-danger\"> Error. </div>";
+			} else {
+				$result2 = $stmt2->get_result();
+			}
+		
+			$stmt2->close();
+		} else {
+			echo var_dump($stmt2);
+
+		}
+		$dbConnection->close();
+	}
+?>
+
+
 <?php include_once "common/header.php" ?>
 
 <body style="padding-top: 20px">
@@ -79,8 +120,29 @@
 						<input type="submit" value="Save" />
 						</form>
 					</div>
+					
+					
+					<div class="panel-heading">
+						<h1> Categories </h1>
+					</div>
+			  		<div class="panel panel-default">
+						<div class="panel-body">
+						<?php echo $error ?>
+						<form action="firstlogin.php" method="post">
+						<?php 
+						$count = 0;
+						while($row = $result2->fetch_assoc()){
+							$count++;
+							echo '
+								  <label><div class="checkbox"><input type="checkbox" name="categories[]" value="'.$row["category_id"].'">'.$row["category_name"].'</label></div>';
+							
+						} ?>
+						<input type="submit" value="Save" />
+						</form>
+						</div>
+			  		</div>					
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>	
 <?php include_once "common/footer.php" ?>
