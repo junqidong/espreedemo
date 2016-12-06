@@ -7,16 +7,17 @@
 		if($_POST["email"] != ""  && $_POST["password"] != "" && $_POST["address1"] != "")
 		{		
 			$dbConnection = new mysqli($host, $username, $password, $database);
+			mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 		
 			if(!$dbConnection->connect_error)
 			{
 				date_default_timezone_set("America/Toronto");
 				$date = date("Y-m-d h:i:s");
 				if(isset($_POST["address2"])){
-					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, address2, dateOfBirth, date_created) VALUES (?,?,?,?,?,?)");
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, address2, date_of_birth, date_created) VALUES (?,?,?,?,?,?)");
 					$stmt->bind_param("ssssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["address2"], $_POST["dob"], $date);
 				} else {
-					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, dateOfBirth, date_created) VALUES (?,?,?,?,?)");
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, date_of_birth, date_created) VALUES (?,?,?,?,?)");
 					$stmt->bind_param("sssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["dob"], $date);
 				}
 				
