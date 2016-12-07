@@ -7,7 +7,7 @@
 		if($_POST["email"] != ""  && $_POST["password"] != "" && $_POST["address1"] != "")
 		{		
 			$dbConnection = new mysqli($host, $username, $password, $database);
-			mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+			//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 		
 			if(!$dbConnection->connect_error)
 			{
@@ -22,7 +22,11 @@
 				}
 				
 				if(!$stmt->execute()){
-					$error = "<div class=\"alert alert-danger\"> Error registering.</div>";
+					if($stmt->errno == 1062){
+						$error = "<div class=\"alert alert-warning\"> Error registering. Email already exists. </div>";
+					} else {
+						$error = "<div class=\"alert alert-danger\"> Error registering.</div>";
+					}
 				} else {
 					header('Location: index.php');
 				}
