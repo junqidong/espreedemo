@@ -1,9 +1,5 @@
 $(document).ready(function(){
 	$('.checkbox').click(function(){
-		if($(this).find("input").attr("checked")) {
-                $(this).find("input").removeAttr("checked");
-            } else {
-                $(this).find("input").attr("checked", "checked");
-            }
+			$(this).find('input[type=checkbox]').prop("checked", !$(this).find('input[type=checkbox]').prop("checked"));
 	});
 });

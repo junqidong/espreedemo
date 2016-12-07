@@ -18,6 +18,7 @@
 			foreach ($coupons as $coupon=>$value) {
 				$stmt->bind_param("ss", $userid, $value);
 				if(!$stmt->execute()){
+					echo $stmt->error;
 					$error = "<div class=\"alert alert-danger\"> Error picking coupon.</div>";
 				}
 			}
@@ -65,6 +66,7 @@
 			foreach ($categories as $categories=>$value) {
 				$stmt2->bind_param("ss", $value, $userid);
 				if(!$stmt2->execute()){
+					echo $stmt2->error;
 					$error = "<div class=\"alert alert-danger\"> Error selecting category.</div>";
 				}
 			}
@@ -109,7 +111,7 @@
 						$count = 0;
 						while($row = $result->fetch_assoc()){
 							$count++;
-							echo '<div class="checkbox coupon">
+							echo '<div class="checkbox coupon" unselectable="on">
 								  <p class="lead">'.$row['brand_name'].'</p>
 								  <label><input type="checkbox" name="coupons[]" value="'.$row["coupon_id"].'">'.$row['name'].'</label>
 								  <span class="price">$ '.$row['price'].'
@@ -132,7 +134,7 @@
 						while($row = $result2->fetch_assoc()){
 							$count++;
 							echo '
-								  <div class="checkbox"><label><input type="checkbox" name="categories[]" value="'.$row["category_id"].'">'.$row["category_name"].'</label></div>';
+								  <label><div class="checkbox"><input type="checkbox" name="categories[]" value="'.$row["category_id"].'">'.$row["category_name"].'</label></div>';
 							
 						} ?>
 						<input type="submit" value="Save" />
