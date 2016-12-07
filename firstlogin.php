@@ -3,6 +3,7 @@
 	session_start();
 	$error = "";
 	
+	//Testing slack git.
 	$dbConnection = new mysqli($host, $username, $password, $database);
 	//mysqli_report(MYSQLI_REPORT_ALL);
 	
