@@ -3,11 +3,9 @@
 	session_start();
 	$error = "";
 	
-	//Testing slack git.
 	$dbConnection = new mysqli($host, $username, $password, $database);
 	//mysqli_report(MYSQLI_REPORT_ALL);
 	
-		
 	if(!$dbConnection->connect_error)
 	{
 		if(isset($_POST["coupons"])){
@@ -19,6 +17,7 @@
 			foreach ($coupons as $coupon=>$value) {
 				$stmt->bind_param("ss", $userid, $value);
 				if(!$stmt->execute()){
+					echo $stmt->error;
 					$error = "<div class=\"alert alert-danger\"> Error picking coupon.</div>";
 				}
 			}
@@ -26,10 +25,8 @@
 				header('Location: welcome.php');
 			}	
 		}
-		// 
 		$stmt = $dbConnection->prepare("SELECT Brand.brand_name, Coupons.coupon_id, Coupons.name, Coupons.price FROM Coupons LEFT JOIN Brand ON Coupons.brand_id = Brand.brand_id");
 		if($stmt){
-		
 			if(!$stmt->execute()){
 				$error = "<div class=\"alert alert-danger\"> Error. </div>";
 			} else {
@@ -61,11 +58,12 @@
 			$categories = $_POST["categories"];
 			$userid = $_SESSION["userid"];
 				
-			$stmt2 = $dbConnection->prepare("INSERT INTO User_Categories(category_id, user_id) VALUES (?,?)");
+			$stmt2 = $dbConnection->prepare("INSERT INTO User_Categories(categor_id, user_id) VALUES (?,?)");
 			
 			foreach ($categories as $categories=>$value) {
 				$stmt2->bind_param("ss", $value, $userid);
 				if(!$stmt2->execute()){
+					echo $stmt2->error;
 					$error = "<div class=\"alert alert-danger\"> Error selecting category.</div>";
 				}
 			}
@@ -110,7 +108,7 @@
 						$count = 0;
 						while($row = $result->fetch_assoc()){
 							$count++;
-							echo '<div class="checkbox coupon">
+							echo '<div class="checkbox coupon" unselectable="on">
 								  <p class="lead">'.$row['brand_name'].'</p>
 								  <label><input type="checkbox" name="coupons[]" value="'.$row["coupon_id"].'">'.$row['name'].'</label>
 								  <span class="price">$ '.$row['price'].'
@@ -133,7 +131,7 @@
 						while($row = $result2->fetch_assoc()){
 							$count++;
 							echo '
-								  <div class="checkbox"><label><input type="checkbox" name="categories[]" value="'.$row["category_id"].'">'.$row["category_name"].'</label></div>';
+								  <label><input type="checkbox" name="categories[]" value="'.$row["category_id"].'">'.$row["category_name"].'</label><br>';
 							
 						} ?>
 						<input type="submit" value="Save" />

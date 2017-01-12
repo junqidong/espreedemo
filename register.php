@@ -2,31 +2,27 @@
 	require "dbinfo.php";
 	$error = "";
 
-	if(isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["address1"]) && isset($_POST["dob"]))
+	if(isset($_POST["email"]) && isset($_POST["password"]) && isset($_POST["address1"]) && isset($_POST["dob"]) &&
+	   !empty($_POST["email"]) && !empty($_POST["password"]) && !empty($_POST["address1"]) && !empty($_POST["dob"]))
 	{
 		if($_POST["email"] != ""  && $_POST["password"] != "" && $_POST["address1"] != "")
 		{		
 			$dbConnection = new mysqli($host, $username, $password, $database);
-			//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 		
 			if(!$dbConnection->connect_error)
 			{
 				date_default_timezone_set("America/Toronto");
 				$date = date("Y-m-d h:i:s");
-				if(isset($_POST["address2"])){
-					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, address2, date_of_birth, date_created) VALUES (?,?,?,?,?,?)");
+				if(isset($_POST["address2"]) && !empty($_POST["address2"])){
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, address2, dateOfBirth, date_created) VALUES (?,?,?,?,?,?)");
 					$stmt->bind_param("ssssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["address2"], $_POST["dob"], $date);
 				} else {
-					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, date_of_birth, date_created) VALUES (?,?,?,?,?)");
+					$stmt = $dbConnection->prepare("INSERT INTO Users(email, password, address1, dateOfBirth, date_created) VALUES (?,?,?,?,?)");
 					$stmt->bind_param("sssss", $_POST["email"], md5($_POST["password"]), $_POST["address1"], $_POST["dob"], $date);
 				}
 				
 				if(!$stmt->execute()){
-					if($stmt->errno == 1062){
-						$error = "<div class=\"alert alert-warning\"> Error registering. Email already exists. </div>";
-					} else {
-						$error = "<div class=\"alert alert-danger\"> Error registering.</div>";
-					}
+					$error = "<div class=\"alert alert-danger\"> Error registering.</div>";
 				} else {
 					header('Location: index.php');
 				}
@@ -52,7 +48,7 @@
 					</div>
 					<div class="panel-body">
 						<?php echo $error ?>
-						<form action="register.php" method="post">
+						<form action="register.php" onsubmit="return confirmPassword()" method="post">
 						<div class="form-group">
 							<label for="username"> Email Address </label>
 							<input class="form-control" type="email" name="email" />
@@ -60,6 +56,10 @@
 						<div class="form-group">
 							<label for="password"> Password </label>
 							<input class="form-control" type="password" name="password" />
+						</div>
+						<div class="form-group">
+							<label for="confirm-password"> Confirm Password </label>
+							<input class="form-control" type="password" name="confirm-password" />
 						</div>
 						<div class="form-group">
 							<label for="username"> Firstname </label>
