@@ -13,7 +13,7 @@
     			echo '<p>MYSQL Error: ' .$dbConnection->connect_error.'</p>';
     		} else {
 			
-				$stmt = $dbConnection->prepare("SELECT user_id, categories_picked, password FROM Users WHERE email = ?");
+				$stmt = $dbConnection->prepare("SELECT user_id, categories_picked, password, status FROM Users WHERE email = ?");
 				$stmt->bind_param("s", $_POST["email"]);
 				
 				if($stmt->execute()){
@@ -23,16 +23,21 @@
 					$password = $row['password'];
 					$userid = $row['user_id'];
 					$categories_picked = $row['categories_picked'];
+					$status = $row['status'];
 					
 					if($password != md5($_POST["password"])){
 						$error = "<div class=\"alert alert-danger\"> Invalid password. </div>";
 					} else {
 						$_SESSION["email"] = $_POST["email"];
 						$_SESSION["userid"] = $userid;
-						if(strcmp($categories_picked, "0")==0){
-							header('Location: firstlogin.php');
+						if(strcmp($status, "0")==0){
+							$error = "<div class=\"alert alert-danger\"> Account not activated. Check your email for an activation link. </div>";
 						} else {
-							header('Location: welcome.php');
+							if(strcmp($categories_picked, "0")==0){
+								header('Location: firstlogin.php');
+							} else {
+								header('Location: welcome.php');
+							}
 						}
 					}
 				} else {
